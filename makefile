@@ -23,7 +23,6 @@ DEP := $(wildcard $(INCLDIR)/*.h)
 # Add Windows-specific options.
 ifeq ($(OS), Windows_NT)
 
-#$(MAIN): LFLAGS += -Wl,-subsystem,windows
 RES := $(wildcard res/*.res)
 
 endif
