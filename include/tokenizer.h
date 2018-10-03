@@ -6,6 +6,6 @@
 
 #include "token.h"
 
-#define DEFAULT_COUNT (128)
+#define DEFAULT_COUNT (64)
 
 Token** Tokenize(char* text, size_t len);

@@ -11,10 +11,9 @@ char* ReadInput(void) {
         fgets(chunk, sizeof(chunk), stdin);
         len = strlen(chunk);
 
-        printf("Read chunk: %s\n", chunk);
-
         // TODO: check for SIZE_MAX
 
+        // Use a second pointer to avoid leaking text if an error occurs.
         char* tmp = realloc(text, length + len + 1);
         if (tmp == NULL) {
             break;
