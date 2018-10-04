@@ -9,4 +9,4 @@
 
 #define DEFAULT_COUNT (64)
 
-TokenList Tokenize(char* text, size_t len);
+TokenList Tokenize(char* text);
