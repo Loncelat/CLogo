@@ -11,6 +11,6 @@ int main(int argc, char** argv) {
 
     // TODO: trim leading/trailin whitespace.
 
-    //Tokenize(line, strlen(line));
+    Tokenize(line, strlen(line));
     free(line);
 }

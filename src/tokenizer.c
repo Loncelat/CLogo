@@ -1,13 +1,14 @@
 #include "tokenizer.h"
 
-Token** Tokenize(char* text, size_t len) {
+TokenList Tokenize(char* text, size_t len) {
+    
+    TokenList tokenList = { NULL, 0 };
 
     uint32_t maxTokens = DEFAULT_COUNT;
-    uint32_t tokenCount = 0;
     uint32_t startIndex = 0;
     uint32_t createNewToken = 0;
 
-    Token** tokens = malloc(maxTokens * sizeof(Token*));
+    tokenList.tokens = malloc(maxTokens * sizeof(Token*));
     
     for (size_t i = 0; i < len; i++) {
         switch (text[i]) {
@@ -15,26 +16,40 @@ Token** Tokenize(char* text, size_t len) {
                 createNewToken = 1;
                 break;
             default:
-                break;           
+                if ( (i == len - 1) && startIndex != i - 1) {
+                    createNewToken = 1;
+                }
+                break;
         }
 
         if (createNewToken) {
-            tokens[tokenCount] = malloc(sizeof(Token));
-            tokens[tokenCount]->value = malloc(i - startIndex);
-            tokenCount += 1;
+            tokenList.tokens[tokenList.count] = malloc(sizeof(Token));
+            tokenList.tokens[tokenList.count]->value = calloc(i - startIndex, sizeof(char));
+            memcpy(tokenList.tokens[tokenList.count]->value, text + startIndex, i - startIndex);
 
-            if (tokenCount > maxTokens) {
+            #ifdef DEBUG
+            printf("Made Token %u: {\"%s\", %u}\n", (uint32_t) tokenList.count,
+                tokenList.tokens[tokenList.count]->value,
+                tokenList.tokens[tokenList.count]->type);
+            #endif
+
+            tokenList.count += 1;
+            startIndex = i + 1;
+
+            if (tokenList.count > maxTokens) {
                 maxTokens += DEFAULT_COUNT;
 
-                Token** tmp = realloc(tokens, maxTokens * sizeof(Token*));
+                Token** tmp = realloc(tokenList.tokens, maxTokens * sizeof(Token*));
                 if (tmp == NULL) {
-                    // Halt and Catch Fire
-                    return NULL;
+                    free(tokenList.tokens);
+                    tokenList.tokens = NULL;
+                    break;
                 }
-                tokens = tmp;
+                tokenList.tokens = tmp;
             }
+            createNewToken = 0;
         }
     }
 
-    return tokens;
+    return tokenList;
 }
