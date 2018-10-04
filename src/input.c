@@ -31,3 +31,39 @@ char* ReadInput(void) {
     free(text);
     return NULL;
 }
+
+char* Trim(char* string) {
+
+    if (string == NULL) { return NULL; }
+    if (string[0] == '\0') { return string; }
+
+    size_t len = strlen(string);
+    char* front = string;
+    char* end = front + len;
+
+    while (isspace(*front)) { front += 1; }
+    if (front != end) {
+        while (isspace(*(--end)) && end != front) { }
+    }
+
+    // If there was trailing whitespace.
+    if (string + len - 1 != end) {
+        *(end + 1) = '\0';
+    }
+
+    char* index = string;
+
+    // If there was leading whitespace.
+    if (front != string) {
+
+        // Loop until null byte.
+        while (*front) {
+            *index = *front;
+            index += 1;
+            front += 1;
+        }
+        *index = '\0';
+    }
+
+    return string;
+}

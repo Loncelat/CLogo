@@ -7,10 +7,13 @@ int main(int argc, char** argv) {
     argv = argv;
 
     char* line = ReadInput();
-    printf("Read %s", line);
+    line = Trim(line);
 
-    // TODO: trim leading/trailin whitespace.
+    #ifdef DEBUG
+    printf("Got input [%s]\n", line);
+    #endif
 
-    Tokenize(line, strlen(line));
+
+    TokenList tokens = Tokenize(line);
     free(line);
 }
