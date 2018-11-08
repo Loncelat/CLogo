@@ -18,6 +18,7 @@ TokenList Tokenize(char* string) {
                 createNewToken = 1;
                 break;
             default:
+                /* Create a new token if the end of the string is reached. */
                 if (i == len - 1) {
                     createNewToken = 1;
                 }
@@ -25,7 +26,11 @@ TokenList Tokenize(char* string) {
         }
 
         if (createNewToken) {
+
+            /* Allocate a new Token into the tokenList */
             tokenList.tokens[tokenList.count] = calloc(sizeof(Token), sizeof(Token));
+
+            /* Copy the string into the created token. */
             tokenList.tokens[tokenList.count]->value = calloc(i - startIndex, sizeof(char));
             memcpy(tokenList.tokens[tokenList.count]->value, string + startIndex, i - startIndex);
 
@@ -34,6 +39,8 @@ TokenList Tokenize(char* string) {
                 tokenList.tokens[tokenList.count]->value,
                 tokenList.tokens[tokenList.count]->type);
             #endif
+
+            // TODO: determine TokenType and arguments
 
             tokenList.count += 1;
             startIndex = i + 1;
