@@ -2,7 +2,7 @@
 SRCDIR  := src
 OBJDIR  := obj
 INCLDIR := include
-PROGDIR := bin
+PROGDIR := 
 
 CC     := gcc
 LIB    := -LSDL2/lib
@@ -14,7 +14,7 @@ $(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11
 debug:   CFLAGS := -Wall -Wextra -DDEBUG
 
 LFLAGS := -Wl,--no-warn-search-mismatch
-LIBS   := -lmingw32 -lSDL2main -lSDL2
+LIBS   := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst %, $(OBJDIR)/%, $(notdir $(SRC:%.c=%.o)))
@@ -28,10 +28,10 @@ RES := $(wildcard res/*.res)
 endif
 
 $(MAIN): $(OBJ)
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)$(MAIN) $^ $(LIBS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c $(DEP)
 	$(CC) $(CFLAGS) $(INCL) $(LIB) -c $< -o $@
 
 debug: $(OBJ)
-	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)/$(MAIN) $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LFLAGS) $(INCL) $(LIB) $(RES) -o $(PROGDIR)$(MAIN) $^ $(LIBS)

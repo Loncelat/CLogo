@@ -6,6 +6,10 @@ int main(int argc, char** argv) {
     argc = argc;
     argv = argv;
 
+    if (InitGraphics()) {
+        return 1;
+    }
+
     char* line = ReadInput();
     line = Trim(line);
 
@@ -13,7 +17,8 @@ int main(int argc, char** argv) {
     printf("Got input [%s]\n", line);
     #endif
 
-
     TokenList tokens = Tokenize(line);
     free(line);
+
+    return 0;
 }
