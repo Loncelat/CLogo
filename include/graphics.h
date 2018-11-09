@@ -2,7 +2,9 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
+#include "main.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 
@@ -24,15 +26,20 @@
 typedef struct Turtle {
     double x;
     double y;
+
+    /* Angle in radians */
     double angle;
 
-    int width;
-    int height;
+    int32_t w;
+    int32_t h;
 
     SDL_Texture *texture;
     uint8_t rotation;
 
     SDL_Rect dstrect;
+
+    /* Pen up/Pen down */
+    uint32_t pd : 1;
 
 } turtle_t;
 
@@ -42,6 +49,8 @@ typedef struct Colour {
     uint8_t b;
 } colour_t;
 
+extern turtle_t _turtle;
+
 int InitGraphics(void);
 int InitTurtle(turtle_t *turtle);
 void ResetTurtle(turtle_t *turtle);
@@ -50,3 +59,6 @@ void ClearGraphics(SDL_Renderer *renderer);
 
 void Draw(void);
 void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle);
+
+void MoveTurtle(double distance);
+void RotateTurtle(double angle);

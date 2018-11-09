@@ -1,6 +1,6 @@
 #include "graphics.h"
 
-turtle_t turtle;
+turtle_t _turtle;
 
 colour_t bgClr = {0, 255, 255};
 colour_t fgClr = {0, 0, 0};
@@ -9,6 +9,8 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 SDL_Texture *background = NULL;
 SDL_Texture *canvas = NULL;
+
+SDL_Event event;
 
 uint64_t vsyncStartTime = 0;
 double freqMultiplier = 0;
@@ -54,7 +56,7 @@ int InitGraphics(void) {
 
     SDL_SetTextureBlendMode(canvas, SDL_BLENDMODE_BLEND);
 
-    if (InitTurtle(&turtle)) {
+    if (InitTurtle(&_turtle)) {
         printf("SDL2 Error: %s\n", SDL_GetError());
         return 1;
     }
@@ -88,20 +90,22 @@ SDL_Texture* LoadImage(char* file) {
 
 int InitTurtle(turtle_t *turtle) {
 
-    ResetTurtle(turtle);
     turtle->texture = LoadImage("graphics/turtle.png");
 
     if (turtle->texture == NULL) {
         return 1;
     }
 
-    if (SDL_QueryTexture(turtle->texture, NULL, NULL, &turtle->width, &turtle->height) != 0) {
+    SDL_SetTextureBlendMode(turtle->texture, SDL_BLENDMODE_BLEND);
+    if (SDL_QueryTexture(turtle->texture, NULL, NULL, &turtle->w, &turtle->h) != 0) {
         return 1;
     }
 
-    turtle->width /= TURTLE_DIRECTIONS;
+    turtle->w /= TURTLE_DIRECTIONS;
 
-    turtle->dstrect = (SDL_Rect) { turtle->x, turtle->y, turtle->width, turtle->height, };
+    ResetTurtle(turtle);
+
+    turtle->dstrect = (SDL_Rect) {turtle->x - turtle->w / 2.0, turtle->y - turtle->h, turtle->w, turtle->h};
 
     return 0;
 }
@@ -109,8 +113,9 @@ int InitTurtle(turtle_t *turtle) {
 void ResetTurtle(turtle_t *turtle) {
     turtle->x = INIT_TURTLE_X;
     turtle->y = INIT_TURTLE_Y;
-    turtle->angle = 0;
+    turtle->angle = M_PI / 2.0;
     turtle->rotation = 0;
+    turtle->pd = 1;
 }
 
 void ClearGraphics(SDL_Renderer *renderer) {
@@ -134,6 +139,13 @@ void ClearGraphics(SDL_Renderer *renderer) {
 }
 
 void Draw(void) {
+
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            shutdownRequested = 1;
+        }
+    }
+
     if (VSYNC_SHOULD_WAIT) {
         VSYNC_WAIT;
     }
@@ -146,7 +158,7 @@ void Draw(void) {
     /* Draw the background, canvas and turtle. */
     SDL_RenderCopy(renderer, background, NULL, NULL);
     SDL_RenderCopy(renderer, canvas, NULL, NULL);
-    DrawTurtle(renderer, &turtle);
+    DrawTurtle(renderer, &_turtle);
 
     SDL_RenderPresent(renderer);
 
@@ -159,16 +171,32 @@ void Draw(void) {
 void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle) {
 
     SDL_Rect srcrect = (SDL_Rect) {
-        turtle->width * turtle->rotation,
+        turtle->w * turtle->rotation,
         0,
-        turtle->width,
-        turtle->height,
+        turtle->w,
+        turtle->h,
     };
 
     /* update the coordinates in the dstrect */
-    turtle->dstrect.x = turtle->x;
-    turtle->dstrect.y = turtle->y;
+    turtle->dstrect.x = turtle->x - turtle->w / 2.0;
+    turtle->dstrect.y = turtle->y - turtle->h;
 
     SDL_RenderCopy(renderer, turtle->texture, &srcrect, &turtle->dstrect);
 
 }
+
+void MoveTurtle(double distance) {
+    int oldX = (int) _turtle.x;
+    int oldY = (int) _turtle.y;
+
+    _turtle.x += cos(_turtle.angle) * distance;
+    _turtle.y -= sin(_turtle.angle) * distance;
+
+    SDL_RenderDrawLine(renderer, oldX, oldY, (int) _turtle.x, (int) _turtle.y);
+}
+
+void RotateTurtle(double angle) {
+    _turtle.angle += angle * (M_PI / 180.0);
+    _turtle.angle = fmod(_turtle.angle, 2 * M_PI);
+}
+
