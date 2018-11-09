@@ -28,7 +28,7 @@ TokenList Tokenize(char* string) {
         if (createNewToken) {
 
             /* Allocate a new Token into the tokenList */
-            tokenList.tokens[tokenList.count] = calloc(sizeof(Token), sizeof(Token));
+            tokenList.tokens[tokenList.count] = calloc(1, sizeof(Token));
 
             /* Copy the string into the created token. */
             tokenList.tokens[tokenList.count]->value = calloc(i - startIndex, sizeof(char));
