@@ -14,7 +14,7 @@ $(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11
 debug:   CFLAGS := -Wall -Wextra -DDEBUG
 
 LFLAGS := -Wl,--no-warn-search-mismatch
-LIBS   := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+LIBS   := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
 
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst %, $(OBJDIR)/%, $(notdir $(SRC:%.c=%.o)))
