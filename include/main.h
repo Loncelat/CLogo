@@ -10,3 +10,5 @@
 #include "graphics.h"
 
 #define OPS_PER_FRAME (1024)
+
+extern uint32_t shutdownRequested;

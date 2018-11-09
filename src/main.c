@@ -1,5 +1,7 @@
 #include "main.h"
 
+uint32_t shutdownRequested = 0;
+
 int main(int argc, char** argv) {
 
     // Temporary stuff.
@@ -10,7 +12,7 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    while (1) {
+    while (!shutdownRequested) {
 
         char* line = ReadInput();
         line = Trim(line);
@@ -19,7 +21,7 @@ int main(int argc, char** argv) {
         printf("Got input [%s]\n", line);
         #endif
 
-        TokenList tokens = Tokenize(line);
+        tokenlist_t tokens = Tokenize(line);
         free(line);
 
         /* Count how many actions have been performed. */
@@ -32,7 +34,7 @@ int main(int argc, char** argv) {
             
             if (Parse(tokens.tokens[i])) {
                 /* Something went wrong */
-                printf("Unknown token: %s\n", tokens.tokens[i]->value);
+                printf("Unknown token: [%s]\n", tokens.tokens[i]->value);
                 Draw();
                 break;
             }
