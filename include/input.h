@@ -9,4 +9,4 @@
 #define DEF_SIZE (128)
 
 char* ReadInput(void);
-char* Trim(char* string);
+char* Trim(char* str);

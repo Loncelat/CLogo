@@ -32,13 +32,13 @@ char* ReadInput(void) {
     return NULL;
 }
 
-char* Trim(char* string) {
+char* Trim(char* str) {
 
-    if (string == NULL) { return NULL; }
-    if (string[0] == '\0') { return string; }
+    if (str == NULL) { return NULL; }
+    if (str[0] == '\0') { return str; }
 
-    size_t len = strlen(string);
-    char* front = string;
+    size_t len = strlen(str);
+    char* front = str;
     char* end = front + len;
 
     while (isspace(*front)) { front += 1; }
@@ -47,14 +47,14 @@ char* Trim(char* string) {
     }
 
     // If there was trailing whitespace.
-    if (string + len - 1 != end) {
+    if (str + len - 1 != end) {
         *(end + 1) = '\0';
     }
 
-    char* index = string;
+    char* index = str;
 
     // If there was leading whitespace.
-    if (front != string) {
+    if (front != str) {
 
         // Loop until null byte.
         while (*front) {
@@ -65,5 +65,5 @@ char* Trim(char* string) {
         *index = '\0';
     }
 
-    return string;
+    return str;
 }
