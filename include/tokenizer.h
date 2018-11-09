@@ -9,4 +9,5 @@
 
 #define DEFAULT_COUNT (64)
 
-TokenList Tokenize(char* text);
+TokenList Tokenize(char* string);
+size_t GetNextEndIndex(char* string, size_t start, size_t len);
