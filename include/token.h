@@ -2,27 +2,23 @@
 
 #include <stdint.h>
 
-enum {
-    UNKNOWN, RPARENS, LPARENS, OPERATOR,
-};
-
 /* Struct used to reference data passed to a command. */
-typedef struct Data {
+typedef struct data {
     union {
         char* text;
         uint64_t number;
     };
-} Data;
+} data_t;
 
-typedef struct Token {
+typedef struct token {
     char* value;
-    uint32_t type;
+    uint64_t hash;
 
     /* Keep track of an array of the arguments. */
-    Data** arguments;
-} Token;
+    data_t** arguments;
+} token_t;
 
-typedef struct TokenList {
-    Token** tokens;
+typedef struct tokenlist {
+    token_t** tokens;
     size_t count;
-} TokenList;
+} tokenlist_t;

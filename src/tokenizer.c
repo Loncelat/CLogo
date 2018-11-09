@@ -1,61 +1,67 @@
 #include "tokenizer.h"
 
-TokenList Tokenize(char* string) {
+tokenlist_t Tokenize(char* str) {
     
-    TokenList tokenList = { NULL, 0 };
+    tokenlist_t tokenList = { NULL, 0 };
 
     uint32_t maxTokens = DEFAULT_COUNT;
     size_t startIndex = 0;
     size_t endIndex = 0;
 
-    tokenList.tokens = malloc(maxTokens * sizeof(Token*));
+    tokenList.tokens = malloc(maxTokens * sizeof(token_t*));
 
-    size_t len = strlen(string);
+    size_t len = strlen(str);
     
     while (startIndex < len) {
-        endIndex = GetNextEndIndex(string, startIndex, len);
+        endIndex = GetNextEndIndex(str, startIndex, len);
 
-        /* Allocate a new Token into the tokenList */
-        tokenList.tokens[tokenList.count] = calloc(1, sizeof(Token));
+        /* Don't create whitespace tokens */
+        if (startIndex < endIndex) {
+            /* Allocate a new token_t into the tokenList */
+            token_t *tok = calloc(1, sizeof(token_t));
 
-        /* Copy the string into the created token. */
-        tokenList.tokens[tokenList.count]->value = calloc(endIndex - startIndex + 1, sizeof(char));
-        memcpy(tokenList.tokens[tokenList.count]->value, string + startIndex, endIndex - startIndex);
-        
-        // TODO: determine TokenType and arguments
+            /* Copy the string into the created token. */
+            tok->value = calloc(endIndex - startIndex + 1, sizeof(char));
+            memcpy(tok->value, str + startIndex, endIndex - startIndex);
+            
+            tok->hash = GetHashCode(tok->value);
 
-        #ifdef DEBUG
-        printf("Made Token %u: { [%s], %u }\n", (uint32_t) tokenList.count,
-            tokenList.tokens[tokenList.count]->value,
-            tokenList.tokens[tokenList.count]->type);
-        #endif
+            // TODO: determine arguments
 
-        tokenList.count += 1;
-        startIndex = endIndex + 1;
+            #ifdef DEBUG
+            printf("Made token_t %I64u: { [%s], %I64u }\n", tokenList.count,
+                tok->value,
+                tok->hash);
+            #endif
 
-        /* Make room for new tokens if there will be too many */
-        if (tokenList.count > maxTokens) {
-            maxTokens += DEFAULT_COUNT;
+            tokenList.tokens[tokenList.count] = tok;
+            tokenList.count += 1;
 
-            Token** tmp = realloc(tokenList.tokens, maxTokens * sizeof(Token*));
-            if (tmp == NULL) {
-                free(tokenList.tokens);
-                tokenList.tokens = NULL;
-                break;
+            /* Make room for new tokens if the list is full */
+            if (tokenList.count > maxTokens) {
+                maxTokens += DEFAULT_COUNT;
+
+                token_t** tmp = realloc(tokenList.tokens, maxTokens * sizeof(token_t*));
+                if (tmp == NULL) {
+                    free(tokenList.tokens);
+                    tokenList.tokens = NULL;
+                    break;
+                }
+                tokenList.tokens = tmp;
             }
-            tokenList.tokens = tmp;
         }
+        startIndex = endIndex + 1;
     }
 
     return tokenList;
 }
 
-/* Return the index one after the end of the next substring. */
-size_t GetNextEndIndex(char* string, size_t start, size_t len) {
+/* Return the index one after the end of the next substring */
+size_t GetNextEndIndex(char* str, size_t start, size_t len) {
 
     for (size_t i = start; i < len + 1; ++i) {
         
-        switch(string[i]) {
+        switch(str[i]) {
             case ' ':
                 return i;
             default:
@@ -67,5 +73,15 @@ size_t GetNextEndIndex(char* string, size_t start, size_t len) {
     }
 
     return 0;
+}
 
+uint64_t GetHashCode(char *str) {
+    uint64_t hash = 5381;
+    uint32_t c;
+
+    while ( (c = *str++) ) {
+        hash = hash * 33 + c;
+    }
+
+    return hash;
 }
