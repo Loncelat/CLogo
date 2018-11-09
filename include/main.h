@@ -6,4 +6,7 @@
 
 #include "input.h"
 #include "tokenizer.h"
+#include "parser.h"
 #include "graphics.h"
+
+#define OPS_PER_FRAME (1024)
