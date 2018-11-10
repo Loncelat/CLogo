@@ -1,14 +1,12 @@
 #include "graphics.h"
 
-turtle_t _turtle;
-
 colour_t bgClr = {0, 255, 255};
 colour_t fgClr = {0, 0, 0};
 
-SDL_Window *window = NULL;
-SDL_Renderer *renderer = NULL;
-SDL_Texture *background = NULL;
-SDL_Texture *canvas = NULL;
+SDL_Window *_window = NULL;
+SDL_Renderer *_renderer = NULL;
+SDL_Texture *_background = NULL;
+SDL_Texture *_canvas = NULL;
 
 SDL_Event event;
 
@@ -16,7 +14,7 @@ uint64_t vsyncStartTime = 0;
 double freqMultiplier = 0;
 
 int InitGraphics(void) {
-    window = SDL_CreateWindow(
+    _window = SDL_CreateWindow(
         "CLogo",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
@@ -25,36 +23,28 @@ int InitGraphics(void) {
         0
     );
 
-    if (window == NULL) {
+    if (_window == NULL) {
         printf("SDL2 Error: %s\n", SDL_GetError());
         return 1;
     }
 
-    renderer = SDL_CreateRenderer(window, -1, RENDERER_FLAGS);
+    _renderer = SDL_CreateRenderer(_window, -1, RENDERER_FLAGS);
 
-    if (renderer == NULL) {
+    if (_renderer == NULL) {
         printf("SDL2 Error: %s\n", SDL_GetError());
         return 1;
     }
 
     /* Create the textures. */
-    background = SDL_CreateTexture(        
-        renderer,
+    _canvas = SDL_CreateTexture(
+        _renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_TARGET,
         WIDTH,
         HEIGHT
     );
 
-    canvas = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_ARGB8888,
-        SDL_TEXTUREACCESS_TARGET,
-        WIDTH,
-        HEIGHT
-    );
-
-    SDL_SetTextureBlendMode(canvas, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureBlendMode(_canvas, SDL_BLENDMODE_BLEND);
 
     if (InitTurtle(&_turtle)) {
         printf("SDL2 Error: %s\n", SDL_GetError());
@@ -63,8 +53,8 @@ int InitGraphics(void) {
 
     freqMultiplier = 1000.0 / SDL_GetPerformanceFrequency();
 
-    SDL_SetRenderTarget(renderer, canvas);
-    ClearGraphics(renderer);
+    SDL_SetRenderTarget(_renderer, _canvas);
+    ClearGraphics(_renderer);
 
     Draw();
 
@@ -78,7 +68,7 @@ SDL_Texture* LoadImage(char* file) {
         return NULL;
     }
 
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(_renderer, image);
 
     if (texture == NULL) {
         return NULL;
@@ -103,9 +93,7 @@ int InitTurtle(turtle_t *turtle) {
 
     turtle->w /= TURTLE_DIRECTIONS;
 
-    ResetTurtle(turtle);
-
-    turtle->dstrect = (SDL_Rect) {turtle->x - turtle->w / 2.0, turtle->y - turtle->h, turtle->w, turtle->h};
+    turtle->dstrect = (SDL_Rect) {0, 0, turtle->w, turtle->h};
 
     return 0;
 }
@@ -116,21 +104,23 @@ void ResetTurtle(turtle_t *turtle) {
     turtle->angle = M_PI / 2.0;
     turtle->rotation = 0;
     turtle->pd = 1;
+    turtle->visible = 1;
 }
 
 void ClearGraphics(SDL_Renderer *renderer) {
 
+    ResetTurtle(&_turtle);
+
     /* Reset background colour to white */
     bgClr = (colour_t) {255, 255, 255};
-    SDL_SetRenderDrawColor(renderer, 0, bgClr.g, bgClr.b, SDL_ALPHA_OPAQUE);
+    SDL_SetRenderDrawColor(renderer, bgClr.r, bgClr.g, bgClr.b, SDL_ALPHA_OPAQUE);
 
     /* Clear the background */
-    SDL_SetRenderTarget(renderer, background);
     SDL_RenderClear(renderer);
 
     /* Clear the canvas (transparent) */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-    SDL_SetRenderTarget(renderer, canvas);
+    SDL_SetRenderTarget(renderer, _canvas);
     SDL_RenderClear(renderer);
 
     /* Restore the colour to the foreground colour */
@@ -151,52 +141,29 @@ void Draw(void) {
     }
 
     /* Set render target to the window. */
-    SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(_renderer, NULL);
 
-    SDL_RenderClear(renderer);
+    /* Clear the background */
+    SDL_SetRenderDrawColor(_renderer, bgClr.r, bgClr.g, bgClr.b, SDL_ALPHA_OPAQUE);
+    SDL_RenderClear(_renderer);
 
-    /* Draw the background, canvas and turtle. */
-    SDL_RenderCopy(renderer, background, NULL, NULL);
-    SDL_RenderCopy(renderer, canvas, NULL, NULL);
-    DrawTurtle(renderer, &_turtle);
+    /* Draw the canvas and turtle. */
+    SDL_RenderCopy(_renderer, _canvas, NULL, NULL);
+    DrawTurtle(_renderer, &_turtle);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(_renderer);
 
     /* Restore the render target to the canvas. */
-    SDL_SetRenderTarget(renderer, canvas);
+    SDL_SetRenderTarget(_renderer, _canvas);
+    SDL_SetRenderDrawColor(_renderer, fgClr.r, fgClr.g, fgClr.b, SDL_ALPHA_OPAQUE);
 
     vsyncStartTime = SDL_GetPerformanceCounter();
 }
 
-void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle) {
-
-    SDL_Rect srcrect = (SDL_Rect) {
-        turtle->w * turtle->rotation,
-        0,
-        turtle->w,
-        turtle->h,
-    };
-
-    /* update the coordinates in the dstrect */
-    turtle->dstrect.x = turtle->x - turtle->w / 2.0;
-    turtle->dstrect.y = turtle->y - turtle->h;
-
-    SDL_RenderCopy(renderer, turtle->texture, &srcrect, &turtle->dstrect);
-
+void SetForeground(double r, double g, double b) {
+    fgClr = (colour_t) {(int) r % 256, (int) g % 256, (int) b % 256};
+    SDL_SetRenderDrawColor(_renderer, fgClr.r, fgClr.g, fgClr.b, SDL_ALPHA_OPAQUE);
 }
-
-void MoveTurtle(double distance) {
-    int oldX = (int) _turtle.x;
-    int oldY = (int) _turtle.y;
-
-    _turtle.x += cos(_turtle.angle) * distance;
-    _turtle.y -= sin(_turtle.angle) * distance;
-
-    SDL_RenderDrawLine(renderer, oldX, oldY, (int) _turtle.x, (int) _turtle.y);
+void SetBackground(double r, double g, double b) {
+    bgClr = (colour_t) {(int) r % 256, (int) g % 256, (int) b % 256};
 }
-
-void RotateTurtle(double angle) {
-    _turtle.angle += angle * (M_PI / 180.0);
-    _turtle.angle = fmod(_turtle.angle, 2 * M_PI);
-}
-

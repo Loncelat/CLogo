@@ -2,8 +2,9 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <math.h>
 
+#include "types.h"
+#include "turtle.h"
 #include "main.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -23,33 +24,7 @@
 #define VSYNC_SHOULD_WAIT ((SDL_GetPerformanceCounter() - vsyncStartTime) * freqMultiplier < FRAME_FREQUENCY)
 #define VSYNC_WAIT (SDL_Delay((FRAME_FREQUENCY) - (SDL_GetPerformanceCounter() - vsyncStartTime) * freqMultiplier))
 
-typedef struct Turtle {
-    double x;
-    double y;
-
-    /* Angle in radians */
-    double angle;
-
-    int32_t w;
-    int32_t h;
-
-    SDL_Texture *texture;
-    uint8_t rotation;
-
-    SDL_Rect dstrect;
-
-    /* Pen up/Pen down */
-    uint32_t pd : 1;
-
-} turtle_t;
-
-typedef struct Colour {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} colour_t;
-
-extern turtle_t _turtle;
+extern SDL_Renderer *_renderer;
 
 int InitGraphics(void);
 int InitTurtle(turtle_t *turtle);
@@ -57,8 +32,7 @@ void ResetTurtle(turtle_t *turtle);
 
 void ClearGraphics(SDL_Renderer *renderer);
 
-void Draw(void);
-void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle);
+void SetForeground(double r, double g, double b);
+void SetBackground(double r, double g, double b);
 
-void MoveTurtle(double distance);
-void RotateTurtle(double angle);
+void Draw(void);
