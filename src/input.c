@@ -2,7 +2,7 @@
 
 char* ReadInput(void) {
     char chunk[CHUNK_SIZE];
-    char* text = calloc(DEF_SIZE * sizeof(char), sizeof(char));
+    char* text = calloc(CHUNK_SIZE * sizeof(char), sizeof(char));
 
     size_t length = 0;
     size_t len = 0;

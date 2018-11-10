@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define CHUNK_SIZE (128)
-#define DEF_SIZE (128)
+#define CHUNK_SIZE (1024)
 
 char* ReadInput(void);
 char* Trim(char* str);
