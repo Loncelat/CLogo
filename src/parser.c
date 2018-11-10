@@ -5,20 +5,57 @@ int Parse(token_t *token) {
     switch(token->hash) {
         
         case HASH_FD:
-            MoveTurtle(10);
+            MoveTurtle(token->arg[0]->number);
             break;
 
         case HASH_BK:
-            MoveTurtle(-10);
+            MoveTurtle(-token->arg[0]->number);
             break;
 
         case HASH_RT:
-            RotateTurtle(-10);
+            RotateTurtle(-token->arg[0]->number);
             break;
 
         case HASH_LT:
-            RotateTurtle(10);
+            RotateTurtle(token->arg[0]->number);
             break;
+
+        case HASH_PD:
+            _turtle.pd = 1;
+            break;
+
+        case HASH_PU:
+            _turtle.pd = 0;
+            break;
+
+        case HASH_PI:
+            _turtle.pd = !_turtle.pd;
+            break;
+
+        case HASH_ST:
+            _turtle.visible = 1;
+            break;
+
+        case HASH_HT:
+            _turtle.visible = 0;
+            break;
+
+        case HASH_CS:
+            ClearGraphics(_renderer);
+            break;
+
+        case HASH_SETPOS:
+            SetTurtlePosition(token->arg[0]->number, token->arg[1]->number);
+            break;
+
+        case HASH_SETPC:
+            SetForeground(token->arg[0]->number, token->arg[1]->number, token->arg[2]->number);
+            break;
+
+        case HASH_SETBC:
+            SetBackground(token->arg[0]->number, token->arg[1]->number, token->arg[2]->number);
+            break;
+
         default:
             return 1;
     }
