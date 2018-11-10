@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "types.h"
 #include "input.h"
 #include "tokenizer.h"
 #include "parser.h"

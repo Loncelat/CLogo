@@ -14,15 +14,19 @@ int main(int argc, char** argv) {
 
     while (!shutdownRequested) {
 
-        char* line = ReadInput();
-        line = Trim(line);
+        tokenlist_t tokens = {NULL, 0};
 
-        #ifdef DEBUG
-        printf("Got input [%s]\n", line);
-        #endif
+        while (tokens.tokens == NULL) {
+            char* line = ReadInput();
+            line = Trim(line);
 
-        tokenlist_t tokens = Tokenize(line);
-        free(line);
+            #ifdef DEBUG
+            printf("Got input [%s]\n", line);
+            #endif
+
+            tokens = Tokenize(line);
+            free(line);
+        }
 
         /* Count how many actions have been performed. */
         size_t operationCount = 0;
@@ -47,6 +51,20 @@ int main(int argc, char** argv) {
         }
 
         Draw();
+        
+        for (size_t i = 0; i < tokens.count; i++) {
+            free(tokens.tokens[i]->value);
+
+            // Free all data.
+            for (size_t k = 0; k < tokens.tokens[i]->argc; k++) {
+                free(tokens.tokens[i]->arg[k]);
+            }
+            free(tokens.tokens[i]->arg);
+            
+            free(tokens.tokens[i]);
+        }
+        free(tokens.tokens);
+
 
     }
 
