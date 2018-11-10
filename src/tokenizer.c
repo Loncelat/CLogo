@@ -55,7 +55,7 @@ tokenlist_t Tokenize(char* str) {
             tokenList.count += 1;
 
             /* Make room for new tokens if the list is full */
-            if (tokenList.count > maxTokens) {
+            if (tokenList.count >= maxTokens) {
                 maxTokens += DEFAULT_COUNT;
 
                 token_t** tmp = realloc(tokenList.tokens, maxTokens * sizeof(token_t*));
