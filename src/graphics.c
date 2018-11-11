@@ -102,7 +102,7 @@ void ResetTurtle(turtle_t *turtle) {
     turtle->x = INIT_TURTLE_X;
     turtle->y = INIT_TURTLE_Y;
     turtle->angle = M_PI / 2.0;
-    turtle->rotation = 0;
+    turtle->rotation = 2;
     turtle->pd = 1;
     turtle->visible = 1;
 }

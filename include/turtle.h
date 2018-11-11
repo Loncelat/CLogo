@@ -7,6 +7,8 @@
 #include "graphics.h"
 #include "SDL2/SDL.h"
 
+#define TURTLE_DIRECTIONS (8)
+
 extern turtle_t _turtle;
 
 void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle);

@@ -8,6 +8,8 @@ void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle) {
         return;
     }
 
+    turtle->rotation = (uint8_t) ( (turtle->angle * 4 / M_PI) + 0.5) % TURTLE_DIRECTIONS;
+
     SDL_Rect srcrect = (SDL_Rect) {
         turtle->w * turtle->rotation,
         0,
