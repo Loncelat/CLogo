@@ -1,5 +1,8 @@
 #include "turtle.h"
 
+/* Piecewise function */
+#define NORM_ANGLE(x) (x < 0 ? 2 * M_PI + (x) : (x))
+
 turtle_t _turtle;
 
 void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle) {
@@ -8,7 +11,8 @@ void DrawTurtle(SDL_Renderer *renderer, turtle_t *turtle) {
         return;
     }
 
-    turtle->rotation = (uint8_t) ( (turtle->angle * 4 / M_PI) + 0.5) % TURTLE_DIRECTIONS;
+    double dividend = floor((NORM_ANGLE(turtle->angle) / M_PI_4) + 0.5);
+    turtle->rotation = (uint8_t) dividend % TURTLE_DIRECTIONS;
 
     SDL_Rect srcrect = (SDL_Rect) {
         turtle->w * turtle->rotation,
@@ -39,7 +43,6 @@ void MoveTurtle(double distance) {
 
 void RotateTurtle(double angle) {
     _turtle.angle += angle * (M_PI / 180.0);
-    _turtle.angle = fmod(_turtle.angle, 2 * M_PI);
 }
 
 void SetTurtlePosition(double x, double y) {

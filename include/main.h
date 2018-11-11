@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 #include "types.h"
 #include "input.h"
 #include "tokenizer.h"
