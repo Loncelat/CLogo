@@ -57,6 +57,11 @@ int main(int argc, char** argv) {
 
             // Free all data.
             for (size_t k = 0; k < tokens.tokens[i]->argc; k++) {
+
+                if (tokens.tokens[i]->arg[k]->type == DATA_TEXT) {
+                    free(tokens.tokens[i]->arg[k]->text);
+                }
+
                 free(tokens.tokens[i]->arg[k]);
             }
             free(tokens.tokens[i]->arg);

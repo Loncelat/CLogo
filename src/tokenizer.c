@@ -118,6 +118,7 @@ data_t* GetNextData(char* str, size_t* iptr, size_t len, uint32_t type) {
         data->text = tmp;
     } else {
         data->number = strtol(tmp, NULL, 0);
+        free(tmp);
     }
 
     /* update the main index */
