@@ -117,7 +117,7 @@ data_t* GetNextData(char* str, size_t* iptr, size_t len, uint32_t type) {
     if (type == DATA_TEXT) {
         data->text = tmp;
     } else {
-        data->number = strtol(tmp, NULL, 0);
+        data->number = strtod(tmp, NULL);
         free(tmp);
     }
 
