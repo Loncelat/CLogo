@@ -7,6 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "SDL2/SDL.h"
 #include "types.h"
 #include "input.h"
 #include "tokenizer.h"

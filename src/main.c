@@ -8,6 +8,8 @@ int main(int argc, char** argv) {
     argc = argc;
     argv = argv;
 
+    SDL_Init(SDL_INIT_VIDEO);
+
     if (InitGraphics()) {
         return 1;
     }
@@ -73,5 +75,6 @@ int main(int argc, char** argv) {
 
     }
 
+    SDL_Quit();
     return 0;
 }
