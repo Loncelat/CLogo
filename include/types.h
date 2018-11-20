@@ -6,7 +6,16 @@
 #define DATA_TEXT (0)
 #define DATA_NUM (1)
 
-typedef struct turtle {
+typedef struct turtle turtle_t;
+typedef struct colour colour_t;
+
+typedef struct tokenlist tokenlist_t;
+typedef struct token token_t;
+typedef struct data data_t;
+
+
+
+struct turtle {
     double x;
     double y;
 
@@ -25,34 +34,35 @@ typedef struct turtle {
     uint32_t pd : 1;
     uint32_t visible : 1;
 
-} turtle_t;
+};
 
-typedef struct colour {
+struct colour {
     uint8_t r;
     uint8_t g;
     uint8_t b;
-} colour_t;
+};
 
 /* Struct used to reference data passed to a command. */
-typedef struct data {
+struct data {
     union {
         char* text;
+        tokenlist_t* tokens;
         double number;
     };
 
     uint32_t type : 1;
-} data_t;
+};
 
-typedef struct token {
+struct token {
     char* value;
     uint64_t hash;
 
     /* Keep track of an array of the arguments. */
     data_t** arg;
     size_t argc;
-} token_t;
+};
 
-typedef struct tokenlist {
+struct tokenlist {
     token_t** tokens;
     size_t count;
-} tokenlist_t;
+};
