@@ -14,7 +14,7 @@ $(MAIN): CFLAGS := -Wall -Wextra -O2 -s -flto -pedantic -std=c11
 debug:   CFLAGS := -Wall -Wextra -DDEBUG -g
 
 LFLAGS := -Wl,--no-warn-search-mismatch
-LIBS   := -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lm
+LIBS   := -lSDL2main -lSDL2 -lSDL2_image -lm
 
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ := $(patsubst %, $(OBJDIR)/%, $(notdir $(SRC:%.c=%.o)))
@@ -23,6 +23,7 @@ DEP := $(wildcard $(INCLDIR)/*.h)
 # Add Windows-specific options.
 ifeq ($(OS), Windows_NT)
 
+LIBS := -lmingw32 $(LIBS)
 RES := $(wildcard res/*.res)
 
 endif
