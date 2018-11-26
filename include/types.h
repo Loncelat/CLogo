@@ -25,7 +25,6 @@ typedef struct tokenlist tokenlist_t;
 typedef struct token token_t;
 typedef struct data data_t;
 
-M_PI
 struct turtle {
     double x;
     double y;
