@@ -6,6 +6,18 @@
 #define DATA_TEXT (0)
 #define DATA_NUM (1)
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
+
+#ifndef M_PI_2
+#define M_PI_2 (1.57079632679489661923)
+#endif
+
+#ifndef M_PI_4
+#define M_PI_4 (0.785398163397448309616)
+#endif
+
 typedef struct turtle turtle_t;
 typedef struct colour colour_t;
 
@@ -13,8 +25,7 @@ typedef struct tokenlist tokenlist_t;
 typedef struct token token_t;
 typedef struct data data_t;
 
-
-
+M_PI
 struct turtle {
     double x;
     double y;
